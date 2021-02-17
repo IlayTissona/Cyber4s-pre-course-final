@@ -34,13 +34,13 @@ async function main() {
             ? jsonRes
             : [];
         loadingGif.hidden = true;
-        console.log(tasksArray);
+        //console.log(tasksArray);
         localStorage.setItem("my-todo", JSON.stringify(tasksArray));
       },
       (err) => {
-        console.log(err);
+        //console.log(err);
         const offlineBar = document.getElementById("loading-bar");
-        offlineBar.innerText = "You are offline, working on local storage";
+        offlineBar.innerText = "Network problem, try again later";
         offlineBar.hidden = false;
         tasksArray =
           localStorage.getItem("my-todo") !== null
@@ -56,8 +56,8 @@ async function main() {
       }
       updateCounter(tasksArray);
     });
-  console.log(tasksArray);
-  // console.log(fetchResponse);
+  //console.log(tasksArray);
+  // //console.log(fetchResponse);
   // loadingGif.hidden = true;
   // if (!fetchResponse.record) {
   // 	//if response isn't OK, expression is undefined, so !undefined is a thruthy expression
@@ -85,7 +85,7 @@ async function main() {
       alert("You have to have somthing to do!");
       textInput.focus();
     } else {
-      console.log(tasksArray);
+      //console.log(tasksArray);
       const toDoContainer = {
         priority: prioritySelector.value,
         text: textInput.value,
@@ -191,7 +191,7 @@ async function main() {
 
   //function to upload datebase
   function updateJSONBin(task, act) {
-    console.log(task);
+    //console.log(task);
     const loadingBar = document.getElementById("loading-bar");
     loadingBar.hidden = false;
     loadingBar.style = "transition :5000ms;";
@@ -214,7 +214,7 @@ async function main() {
         loadingBar.style.transition = "5000ms";
         loadingBar.style.backgroundColor = "white";
         loadingBar.innerText = `Loading...`;
-        console.log(error);
+        //console.log(error);
       }, 3000);
       return;
     }
@@ -272,7 +272,7 @@ async function main() {
 
     for (let i = 0; i < multyTaskArray[pageIndex].length; i++) {
       printTask(multyTaskArray[pageIndex][i], viewSection);
-      // console.log(multyTaskArray[pageIndex][i]);
+      // //console.log(multyTaskArray[pageIndex][i]);
     }
   }
   //priority tool tip show
