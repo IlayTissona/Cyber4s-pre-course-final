@@ -19,7 +19,7 @@ async function main() {
   sortButton.sorted = false; //property I added for toggle option
   const loadingGif = document.querySelector("#loading-gif");
   const header = document.querySelector("#header");
-  header.innerText = `${USER}'s To-Do List`;
+  header.innerText = USER[0].toUpperCase() + USER.slice(1) + "'s To-Do List";
   loadingGif.hidden = false;
   let tasksArray = [];
   // const fetchResponse =
@@ -50,27 +50,8 @@ async function main() {
       }
     )
     .finally(() => {
-      for (let task of tasksArray) {
-        task.index = tasksArray.indexOf(task); //adds index proprty for use in other functions.
-        printTask(task, viewSection);
-      }
       updateCounter(tasksArray);
     });
-  //console.log(tasksArray);
-  // //console.log(fetchResponse);
-  // loadingGif.hidden = true;
-  // if (!fetchResponse.record) {
-  // 	//if response isn't OK, expression is undefined, so !undefined is a thruthy expression
-  // 	tasksArray =
-  // 		localStorage.getItem("my-todo") !== null
-  // 			? JSON.parse(localStorage.getItem("my-todo")) //local storage as a safety net
-  // 			: [];
-  // } else {
-  // 	tasksArray =
-  // 		JSON.stringify(fetchResponse.record["my-todo"]) !== `[{}]` //JSONBin as preffered database
-  // 			? fetchResponse.record["my-todo"]
-  // 			: [];
-  // }
 
   addButton.addEventListener("click", newTask); //task add event
   document.addEventListener("keypress", (event) => {
@@ -94,8 +75,7 @@ async function main() {
       };
       textInput.value = ""; //resets input field
       tasksArray.push(toDoContainer);
-      printTask(toDoContainer, viewSection);
-      updateCounter(tasksArray);
+      // printTask(toDoContainer, viewSection);
       updateJSONBin(toDoContainer, "POST");
       textInput.focus();
       localStorage.setItem("my-todo", JSON.stringify(tasksArray));
@@ -190,8 +170,8 @@ async function main() {
   }
 
   //function to upload datebase
-  function updateJSONBin(task, act) {
-    //console.log(task);
+  async function updateJSONBin(task, act) {
+    let outCheck = false;
     const loadingBar = document.getElementById("loading-bar");
     loadingBar.hidden = false;
     loadingBar.style = "transition :5000ms;";
@@ -205,7 +185,7 @@ async function main() {
       body: JSON.stringify(task),
     });
     fetchTry.then(success).catch(failure);
-    function failure(error) {
+    async function failure(error) {
       loadingBar.style.transition = "0ms";
       loadingBar.style.backgroundColor = "tomato";
       loadingBar.innerText = `couldn't complete action, please try again later (${error})`;
@@ -214,20 +194,22 @@ async function main() {
         loadingBar.style.transition = "5000ms";
         loadingBar.style.backgroundColor = "white";
         loadingBar.innerText = `Loading...`;
-        //console.log(error);
       }, 3000);
-      return;
+      return false;
     }
-    function success() {
+    async function success() {
       loadingBar.style.transition = "0ms";
       loadingBar.style.backgroundColor = "limegreen";
       loadingBar.innerText = `Updated succesfully`;
+      updateCounter(tasksArray);
+      // printTask(toDoContainer, viewSection);
       setTimeout(() => {
         loadingBar.hidden = true;
         loadingBar.style.transition = "5000ms";
         loadingBar.style.backgroundColor = "white";
         loadingBar.innerText = `Loading...`;
       }, 3000);
+      return true;
     }
   }
 
@@ -299,7 +281,7 @@ async function main() {
       for (let i = 0; i < tasksArray.length; i++) {
         tasksArray[i].index = i; //fixes index to match after deleting
       }
-      updateCounter(tasksArray);
+      // updateCounter(tasksArray);
       // updateJSONBin(tasksArray[containerDiv.index], "DELETE");
       const tipWindow = document.querySelector("#tip-window");
       tipWindow.hidden = true;
@@ -417,7 +399,7 @@ async function main() {
       }
       if (changeMade) {
         localStorage.setItem("my-todo", JSON.stringify(tasksArray));
-        updateCounter(tasksArray);
+        // updateCounter(tasksArray);
         updateJSONBin(tasksArray[containerDiv.index], "PUT");
       }
       newTextForm.hidden = true;

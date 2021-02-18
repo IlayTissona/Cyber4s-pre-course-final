@@ -5,6 +5,9 @@ const FS = require("fs");
 const { text } = require("express");
 
 DB.use(express.json());
+DB.use((res, req, next) => {
+  setTimeout(next, 1000);
+});
 
 DB.get("/b/:user/:fileName", (req, res) => {
   FS.readFile(
@@ -83,7 +86,7 @@ DB.delete("/b/:user/:fileName", (req, res) => {
       `./backend/tasks/${req.params.user}/${req.params.fileName}.json`
     )
   ) {
-    res.status(409).send("File does not exist!");
+    res.status(404).send("File does not exist!");
   }
   FS.unlinkSync(
     `./backend/tasks/${req.params.user}/${req.params.fileName}.json`
