@@ -10,20 +10,34 @@ DB.use((res, req, next) => {
 });
 
 DB.get("/b/:user/:fileName", (req, res) => {
+  if (
+    !FS.existsSync(
+      `./backend/tasks/${req.params.user}/${req.params.fileName}.json`
+    )
+  ) {
+    res.status(404).send("File does not exist!");
+    return;
+  }
   FS.readFile(
     `./backend/tasks/${req.params.user}/${req.params.fileName}.json`,
     {},
     (err, data) => {
       if (err) {
         res.send(err);
+        return;
       } else {
         res.status(200).json(JSON.parse(data));
+        return;
       }
     }
   );
 });
 
 DB.get("/b/:user", (req, res) => {
+  if (!FS.existsSync(`./backend/tasks/${req.params.user}`)) {
+    res.status(404).send("user does not exist!");
+    return;
+  }
   const dir = FS.readdirSync(`./backend/tasks/${req.params.user}`);
   const jsonFiles = [];
   let resData = [];
@@ -48,6 +62,7 @@ DB.put("/b/:user/:fileName", async (req, res) => {
     )
   ) {
     res.status(404).send("File does not exist!");
+    return;
   }
   if (req.params.fileName === "user-list") {
     await newUser(req.body["newUser"]);
@@ -70,6 +85,11 @@ DB.post("/b/:user/:fileName", (req, res) => {
     )
   ) {
     res.status(409).send("File already exists!");
+    return;
+  }
+  if (!FS.existsSync(`./backend/tasks/${req.params.user}`)) {
+    res.status(404).send("User does not exist");
+    return;
   }
   FS.writeFile(
     `./backend/tasks/${req.params.user}/${req.params.fileName}.json`,
@@ -87,6 +107,7 @@ DB.delete("/b/:user/:fileName", (req, res) => {
     )
   ) {
     res.status(404).send("File does not exist!");
+    return;
   }
   FS.unlinkSync(
     `./backend/tasks/${req.params.user}/${req.params.fileName}.json`
